@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { EditorState, RichUtils } from "draft-js";
+import { EditorState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createHighlightPlugin from "./plugins/highlightPlugin";
 import addLinkPlugin from "./plugins/addLinkPlugin";
 import BlockStyleToolbar, {
   getBlockStyle
 } from "./blockstyles/BlockStyleToolbar";
+import axios from "axios";
+// import { connect } from "react-redux";
 
 const highlightPlugin = createHighlightPlugin();
 
@@ -13,11 +15,69 @@ class PageContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editorState: EditorState.createEmpty()
+      editorState: EditorState.createEmpty(),
+      displayedNote: "new",
+      hw_title: "My Homework"
     };
     this.onChange = editorState => this.setState({ editorState });
     this.plugins = [highlightPlugin, addLinkPlugin];
   }
+
+  // componentDidMount() {
+  //   if (this.props.note === null) {
+  //     this.setState({
+  //       displayedNote: "new",
+  //       editorState: EditorState.createEmpty()
+  //     });
+  //   } else {
+  //     this.setState({
+  //       displayedNote: this.props.note.id,
+  //       editorState: EditorState.createWithContent(
+  //         convertFromRaw(JSON.parse(this.props.note.content))
+  //       )
+  //     });
+  //   }
+  // }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevProps.note == null && !!this.props.note) {
+  //     this.props.loadNote();
+  //     this.setState({
+  //       displayedNote: this.props.note.id,
+  //       editorState: EditorState.createWithContent(
+  //         convertFromRaw(JSON.parse(this.props.note.content))
+  //       )
+  //     });
+  //   }
+  // }
+
+  // submitEditor = () => {
+  //   let contentState = this.state.editorState.getCurrentContent();
+  //   if (this.state.displayedNote === "new") {
+  //     let note = { content: convertToRaw(contentState) };
+  //     note["content"] = JSON.stringify(note.content);
+  //     this.props.createNote(note.content);
+  //   } else {
+  //     let note = { content: convertToRaw(contentState) };
+  //     note["content"] = JSON.stringify(note.content);
+  //     this.props.updateNote(this.state.displayedNote, note.content);
+  //   }
+  // };
+
+  submitEditor = () => {
+    let contentState = this.state.editorState.getCurrentContent();
+    console.log(contentState);
+    let note = { content: convertToRaw(contentState) };
+    let hw_content = JSON.stringify(note.content);
+    console.log("title: " + this.state.hw_title);
+    console.log(hw_content);
+    const { student_id, hw_title } = this.state;
+    axios.post("http://localhost:3005/api/homework", {
+      student_id: student_id,
+      hw_title: hw_title,
+      hw_content: hw_content
+    });
+  };
 
   handleKeyCommand = command => {
     const newState = RichUtils.handleKeyCommand(
@@ -78,10 +138,19 @@ class PageContainer extends Component {
     this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
   };
 
+  titleChange = input => {
+    this.setState({ hw_title: input });
+    console.log(this.state.hw_title);
+  };
+
   render() {
     return (
       <div className="editorContainer">
-        <h1>Text Editor</h1>
+        <input
+          type="text"
+          value={this.state.hw_title}
+          onChange={e => this.titleChange(e.target.value)}
+        />
         <div className="btncontainer">
           <button onClick={this.onUnderlineClick}>U</button>
           <button onClick={this.onBoldClick}>
@@ -110,9 +179,16 @@ class PageContainer extends Component {
             plugins={this.plugins}
           />
         </div>
+        <button onClick={this.submitEditor}>Submit</button>
       </div>
     );
   }
 }
+
+// function mapStatetoProps(state) {
+//   return { state };
+// }
+
+// export default connect(mapStatetoProps)(PageContainer);
 
 export default PageContainer;
