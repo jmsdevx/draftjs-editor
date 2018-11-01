@@ -1,27 +1,44 @@
 import React, { Component } from "react";
 import { EditorState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
-import createHighlightPlugin from "./plugins/highlightPlugin";
-import addLinkPlugin from "./plugins/addLinkPlugin";
+import createHighlightPlugin from "../plugins/highlightPlugin";
+import addLinkPlugin from "../plugins/addLinkPlugin";
 import BlockStyleToolbar, {
   getBlockStyle
-} from "./blockstyles/BlockStyleToolbar";
+} from "../blockstyles/BlockStyleToolbar";
 import axios from "axios";
 // import { connect } from "react-redux";
 
 const highlightPlugin = createHighlightPlugin();
 
-class PageContainer extends Component {
+class Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editorState: EditorState.createEmpty(),
+      //   editorState: EditorState.createEmpty(),
+      editorState: EditorState.createWithContent(
+        convertFromRaw(this.props.location.state[0].hw_content)
+      ),
       displayedNote: "new",
-      hw_title: "My Homework"
+      hw_title: this.props.location.state[0].hw_title,
+      homework: []
     };
     this.onChange = editorState => this.setState({ editorState });
     this.plugins = [highlightPlugin, addLinkPlugin];
   }
+
+  //   componentDidMount() {
+  //     this.getHomework();
+  //   }
+
+  //   async getHomework() {
+  //     await axios
+  //       .get(`http://localhost:3005/api/homework/${this.props.match.params.id}`)
+  //       .then(response => {
+  //         this.setState({ homework: response.data, check: false });
+  //         console.log(this.state.homework);
+  //       });
+  //   }
 
   // componentDidMount() {
   //   if (this.props.note === null) {
@@ -66,17 +83,19 @@ class PageContainer extends Component {
 
   submitEditor = () => {
     let contentState = this.state.editorState.getCurrentContent();
+    console.log(contentState);
     let note = { content: convertToRaw(contentState) };
-    console.log(note);
     let hw_content = JSON.stringify(note.content);
     console.log("title: " + this.state.hw_title);
     console.log(hw_content);
-    const { student_id, hw_title } = this.state;
-    axios.post("http://localhost:3005/api/homework", {
-      student_id: student_id,
-      hw_title: hw_title,
-      hw_content: hw_content
-    });
+    const { hw_title } = this.state;
+    axios.put(
+      `http://localhost:3005/api/homework/edit/${this.props.match.params.id}`,
+      {
+        hw_title: hw_title,
+        hw_content: hw_content
+      }
+    );
   };
 
   handleKeyCommand = command => {
@@ -191,4 +210,4 @@ class PageContainer extends Component {
 
 // export default connect(mapStatetoProps)(PageContainer);
 
-export default PageContainer;
+export default Edit;

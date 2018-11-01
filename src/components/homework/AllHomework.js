@@ -19,6 +19,15 @@ class AllHomework extends Component {
       .catch(e => console.log(e));
   }
 
+  deleteHW(id) {
+    axios
+      .delete(`http://localhost:3005/api/homework/${id}`)
+      .then(response => {
+        this.setState({ homeworks: response.data });
+      })
+      .catch(error => console.log(error));
+  }
+
   render() {
     let display = this.state.homeworks.map((e, i) => {
       return (
@@ -27,6 +36,7 @@ class AllHomework extends Component {
             Title: {e.hw_title}
             --- Content: {e.hw_content.blocks[0].text} .....{" "}
             <Link to={`/homework/results/${e.hw_id}`}>Results</Link>
+            <button onClick={() => this.deleteHW(e.hw_id)}>Delete</button>
           </h2>
         </div>
       );

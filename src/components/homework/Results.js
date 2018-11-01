@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 require("dotenv").config();
 
 class Results extends Component {
@@ -15,6 +16,8 @@ class Results extends Component {
           { better: ["none"] }
         ]
       },
+      suggestion: "",
+      highlights: [],
       check: false
     };
     this.getHomework = this.getHomework.bind(this);
@@ -36,8 +39,8 @@ class Results extends Component {
   }
 
   drill() {
-    let alltext = this.state.homework[0].hw_content.blocks.map((e, i) =>
-      alltext.push(e.text)
+    let alltext = this.state.homework[0].hw_content.blocks.map(
+      (e, i) => e.text
     );
     let newtext = alltext.join(" ");
     this.setState({ content: newtext, check: !this.state.check });
@@ -51,17 +54,45 @@ class Results extends Component {
           this.state.content
         }?&key=HzehDNgOrWUNFEOk`
       )
-      .then(response => this.setState({ errors: response.data }));
+      .then(
+        response => this.setState({ errors: response.data })
+        // , () => this.highlight())
+      );
   }
 
-  highlight() {
-    let split = this.state.content.split();
-  }
+  //possible future use for color coding
+  // highlight() {
+  //   let { errors } = this.state.errors;
+  //   let { content } = this.state;
+  //   for (let i = 0; i < errors.length; i++) {
+  //     let start = errors[i].offset;
+  //     let length = errors[i].length;
+  //     let newcontent =
+  //       content.substring(0, start) +
+  //       content
+  //         .substring(start, start + length)
+  //         .bold()
+  //         .fontcolor("red") +
+  //       content.substring(start + length + 1, content.length);
+  //     this.setState({ content: newcontent });
+  //   }
+  // }
+
+  //possible future use for color coding
+  // highlight() {
+  //   let { errors } = this.state.errors;
+  //   let highlights = errors.map((e, i) => {
+  //     return { offset: e.offset, length: e.length };
+  //   });
+  //   this.setState({ highlights: highlights });
+  // }
 
   render() {
     let errordisplay = "";
     let typedisplay = "";
     let fixdisplay = "";
+    let contentdisplay = this.state.content;
+
     if (this.state.check) {
       errordisplay = this.state.errors.errors.map((e, i) => {
         return (
@@ -80,7 +111,7 @@ class Results extends Component {
       fixdisplay = this.state.errors.errors.map((e, i) => {
         return (
           <div key={i}>
-            <h3>{e.better}</h3>
+            <h3>{e.better && e.better[0]}</h3>
           </div>
         );
       });
@@ -93,7 +124,15 @@ class Results extends Component {
         <div className="hwErrorBox">
           <div className="yourHomework">
             <h2>Your Homework: </h2>
-            <h3>{this.state.content}</h3>
+            <h3>{contentdisplay}</h3>
+            <Link
+              to={{
+                pathname: `/homework/edit/${this.props.match.params.id}`,
+                state: this.state.homework
+              }}
+            >
+              Edit
+            </Link>
           </div>
           <div className="errors">
             <div>
@@ -101,12 +140,12 @@ class Results extends Component {
               {errordisplay}
             </div>
             <div>
-              <h2>Type:</h2>
-              {typedisplay}
-            </div>
-            <div>
               <h2>Suggestion:</h2>
               {fixdisplay}
+            </div>
+            <div>
+              <h2>Type:</h2>
+              {typedisplay}
             </div>
           </div>
         </div>

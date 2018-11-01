@@ -11,6 +11,8 @@ const { addStudent } = require("./controller");
 const { addHomework } = require("./controller");
 const { getAllHomework } = require("./controller");
 const { getOneHomework } = require("./controller");
+const { deleteHomework } = require("./controller");
+const { editHomework } = require("./controller");
 
 massive(process.env.STRING)
   .then(dbInstance => {
@@ -29,5 +31,7 @@ app.post("/api/students", addStudent);
 app.post("/api/homework", addHomework);
 app.get("/api/homework/all", getAllHomework);
 app.get("/api/homework/:id", getOneHomework);
+app.delete("/api/homework/:id", deleteHomework);
+app.put("/api/homework/edit/:id", editHomework);
 
 app.listen(port, () => console.log(`Listening on ${port}`));
