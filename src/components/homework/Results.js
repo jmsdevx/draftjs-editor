@@ -8,7 +8,13 @@ class Results extends Component {
     this.state = {
       homework: [],
       content: "",
-      errors: { errors: [{ bad: "click get to see results" }, { type: "" }] },
+      errors: {
+        errors: [
+          { bad: "click get to see results" },
+          { type: "" },
+          { better: ["none"] }
+        ]
+      },
       check: false
     };
     this.getHomework = this.getHomework.bind(this);
@@ -29,6 +35,15 @@ class Results extends Component {
     this.drill();
   }
 
+  drill() {
+    let alltext = this.state.homework[0].hw_content.blocks.map((e, i) =>
+      alltext.push(e.text)
+    );
+    let newtext = alltext.join(" ");
+    this.setState({ content: newtext, check: !this.state.check });
+    console.log(this.state.content);
+  }
+
   getResults() {
     axios
       .post(
@@ -39,19 +54,14 @@ class Results extends Component {
       .then(response => this.setState({ errors: response.data }));
   }
 
-  drill() {
-    let alltext = [];
-    this.state.homework[0].hw_content.blocks.map((e, i) =>
-      alltext.push(e.text)
-    );
-    let newtext = alltext.join(" ");
-    this.setState({ content: newtext, check: !this.state.check });
-    console.log(this.state.content);
+  highlight() {
+    let split = this.state.content.split();
   }
 
   render() {
     let errordisplay = "";
     let typedisplay = "";
+    let fixdisplay = "";
     if (this.state.check) {
       errordisplay = this.state.errors.errors.map((e, i) => {
         return (
@@ -64,6 +74,13 @@ class Results extends Component {
         return (
           <div key={i}>
             <h3>{e.type}</h3>
+          </div>
+        );
+      });
+      fixdisplay = this.state.errors.errors.map((e, i) => {
+        return (
+          <div key={i}>
+            <h3>{e.better}</h3>
           </div>
         );
       });
@@ -86,6 +103,10 @@ class Results extends Component {
             <div>
               <h2>Type:</h2>
               {typedisplay}
+            </div>
+            <div>
+              <h2>Suggestion:</h2>
+              {fixdisplay}
             </div>
           </div>
         </div>
