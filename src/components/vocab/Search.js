@@ -9,7 +9,9 @@ class Search extends Component {
       input: "",
       type: "regions=us",
       results: [],
-      defs: []
+      defs: [],
+      lexCat: [],
+      speech: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -22,28 +24,22 @@ class Search extends Component {
     e.preventDefault();
     console.log(this.state);
     const { input, type } = this.state;
-    await axios
-      .post("http://localhost:3005/api/search", {
-        input: input,
-        type: type
-      })
-      .then(response =>
-        this.setState({ results: response.data }, () =>
-          console.log(this.state.results)
+    if (type === "regions=us") {
+      await axios
+        .post("http://localhost:3005/api/search", {
+          input: input,
+          type: type
+        })
+        .then(response =>
+          this.setState({ results: response.data, input: "" }, () =>
+            console.log(this.state.results)
+          )
         )
-      )
-      .catch(e => console.log(e));
-    this.drill();
+        .catch(e => console.log(e));
+      this.drill();
+    }
+    // else if()
   }
-
-  //   drill() {
-  //     let defs = this.state.results[0].entries.map((e, i) => {
-  //       return e.senses.map((j, k) => {
-  //         return j.definitions || j.short_definitions;
-  //       });
-  //     });
-  //     this.setState({ defs: defs }, () => console.log(this.state.defs));
-  //   }
 
   drill() {
     let defs = this.state.results.map((e, i) => {
@@ -53,10 +49,54 @@ class Search extends Component {
         });
       });
     });
-    this.setState({ defs: defs }, () => console.log(this.state.defs));
+    let lexCat = this.state.results.map((e, i) => {
+      return e.lexicalCategory;
+    });
+    let speech = this.state.results.map((e, i) => {
+      return e.pronunciations.map((f, j) => {
+        return f.audioFile;
+      });
+    });
+    this.setState({ defs: defs, lexCat: lexCat, speech: speech }, () =>
+      console.log(this.state)
+    );
   }
- 
+
   render() {
+    let speechDisplay = this.state.speech;
+
+    let lexCatDisplay = this.state.lexCat.map((e, i) => {
+      return (
+        <div className="lexCat" key={i}>
+          <h1>{e}</h1>
+        </div>
+      );
+    });
+
+    let defsDisplay = this.state.defs.map((e, i) => {
+      return e.map((f, j) => {
+        return f.map((g, k) => {
+          return (
+            <div className="defs" key={k}>
+              <h3>
+                {k + 1}. {g}
+              </h3>
+            </div>
+          );
+        });
+      });
+    });
+
+    // let defsDisplay = this.state.defs.map((e, i) => {
+    //   return (
+    //     <div className="defs" key={i}>
+    //       <h3>
+    //         {i + 1}. {e}
+    //       </h3>
+    //     </div>
+    //   );
+    // });
+
     return (
       <div className="searchcontainer">
         <h1>Search!</h1>
@@ -80,6 +120,10 @@ class Search extends Component {
               Search
             </button>
           </div>
+        </div>
+        <div className="searchResults">
+          <div>{lexCatDisplay}</div>
+          <div>{defsDisplay}</div>
         </div>
       </div>
     );
