@@ -55,7 +55,7 @@ class Search extends Component {
     });
     this.setState({ defs: defs }, () => console.log(this.state.defs));
   }
-
+ 
   render() {
     return (
       <div className="searchcontainer">
