@@ -1,3 +1,6 @@
+const axios = require("axios");
+require("dotenv").config();
+
 module.exports = {
   addStudent: (req, res, next) => {
     const dbInstance = req.app.get("db");
@@ -94,5 +97,25 @@ module.exports = {
         res.status(200).send(response);
       })
       .catch(e => res.status(500).send(e));
+  },
+
+  getSearch: (req, res) => {
+    const { input, type } = req.body;
+    axios
+      .get(
+        `https://od-api.oxforddictionaries.com/api/v1/entries/en/${input}/${type}`,
+        {
+          headers: {
+            app_id: `${process.env.OXFORD_ID}`,
+            app_key: `${process.env.OXFORD_KEY}`
+            // "Content-Type": "application/json",
+            // Accept: "application/json"
+          }
+        }
+      )
+      .then(response =>
+        res.status(200).send(response.data.results[0].lexicalEntries)
+      )
+      .catch(e => console.log(e));
   }
 };

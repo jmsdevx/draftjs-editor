@@ -4,4 +4,4 @@ INSERT INTO homework
     hw_content
     )
 
-VALUES( $1, $2, $3)
+VALUES( $1, $2, $3);

@@ -89,13 +89,19 @@ class Edit extends Component {
     console.log("title: " + this.state.hw_title);
     console.log(hw_content);
     const { hw_title } = this.state;
-    axios.put(
-      `http://localhost:3005/api/homework/edit/${this.props.match.params.id}`,
-      {
-        hw_title: hw_title,
-        hw_content: hw_content
-      }
-    );
+    axios
+      .put(
+        `http://localhost:3005/api/homework/edit/${this.props.match.params.id}`,
+        {
+          hw_title: hw_title,
+          hw_content: hw_content
+        }
+      )
+      .then(
+        this.props.history.push(
+          `/homework/results/${this.props.match.params.id}`
+        )
+      );
   };
 
   handleKeyCommand = command => {

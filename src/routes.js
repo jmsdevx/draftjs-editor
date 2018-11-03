@@ -6,6 +6,7 @@ import PageContainer1 from "./components/PageContainer1";
 import AllHomework from "./components/homework/AllHomework";
 import Results from "./components/homework/Results";
 import Edit from "./components/homework/Edit";
+import Vocab from "./components/vocab/Vocab";
 
 export default (
   <Switch>
@@ -15,5 +16,6 @@ export default (
     <Route path="/homework/all" component={AllHomework} />
     <Route path="/homework/results/:id" component={Results} />
     <Route path="/homework/edit/:id" component={Edit} />
+    <Route path="/vocab" component={Vocab} />
   </Switch>
 );

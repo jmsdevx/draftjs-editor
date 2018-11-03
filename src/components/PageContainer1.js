@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { EditorState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
+import { EditorState, RichUtils, convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createHighlightPlugin from "./plugins/highlightPlugin";
 import addLinkPlugin from "./plugins/addLinkPlugin";
@@ -72,11 +72,13 @@ class PageContainer extends Component {
     console.log("title: " + this.state.hw_title);
     console.log(hw_content);
     const { student_id, hw_title } = this.state;
-    axios.post("http://localhost:3005/api/homework", {
-      student_id: student_id,
-      hw_title: hw_title,
-      hw_content: hw_content
-    });
+    axios
+      .post("http://localhost:3005/api/homework", {
+        student_id: student_id,
+        hw_title: hw_title,
+        hw_content: hw_content
+      })
+      .then(this.props.history.push(`/homework/all`));
   };
 
   handleKeyCommand = command => {

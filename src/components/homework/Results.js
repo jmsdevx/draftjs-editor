@@ -10,11 +10,7 @@ class Results extends Component {
       homework: [],
       content: "",
       errors: {
-        errors: [
-          { bad: "click get to see results" },
-          { type: "" },
-          { better: ["none"] }
-        ]
+        errors: [{ bad: "Loading!" }, { type: "" }, { better: [""] }]
       },
       suggestion: "",
       highlights: [],
@@ -43,49 +39,23 @@ class Results extends Component {
       (e, i) => e.text
     );
     let newtext = alltext.join(" ");
-    this.setState({ content: newtext, check: !this.state.check });
-    console.log(this.state.content);
+    this.setState({ content: newtext, check: !this.state.check }, () =>
+      this.getResults()
+    );
   }
 
   getResults() {
     axios
       .post(
-        `https://api.textgears.com/check.php?text=${
-          this.state.content
-        }?&key=HzehDNgOrWUNFEOk`
+        `https://api.textgears.com/check.php?text=${this.state.content}?&key=${
+          process.env.TG_KEY
+        }`
       )
       .then(
         response => this.setState({ errors: response.data })
         // , () => this.highlight())
       );
   }
-
-  //possible future use for color coding
-  // highlight() {
-  //   let { errors } = this.state.errors;
-  //   let { content } = this.state;
-  //   for (let i = 0; i < errors.length; i++) {
-  //     let start = errors[i].offset;
-  //     let length = errors[i].length;
-  //     let newcontent =
-  //       content.substring(0, start) +
-  //       content
-  //         .substring(start, start + length)
-  //         .bold()
-  //         .fontcolor("red") +
-  //       content.substring(start + length + 1, content.length);
-  //     this.setState({ content: newcontent });
-  //   }
-  // }
-
-  //possible future use for color coding
-  // highlight() {
-  //   let { errors } = this.state.errors;
-  //   let highlights = errors.map((e, i) => {
-  //     return { offset: e.offset, length: e.length };
-  //   });
-  //   this.setState({ highlights: highlights });
-  // }
 
   render() {
     let errordisplay = "";
@@ -120,7 +90,6 @@ class Results extends Component {
     return (
       <div className="resultsContainer">
         <h1>Results</h1>
-        <button onClick={this.getResults}>Get</button>
         <div className="hwErrorBox">
           <div className="yourHomework">
             <h2>Your Homework: </h2>
@@ -155,3 +124,30 @@ class Results extends Component {
 }
 
 export default Results;
+
+//possible future use for color coding
+// highlight() {
+//   let { errors } = this.state.errors;
+//   let { content } = this.state;
+//   for (let i = 0; i < errors.length; i++) {
+//     let start = errors[i].offset;
+//     let length = errors[i].length;
+//     let newcontent =
+//       content.substring(0, start) +
+//       content
+//         .substring(start, start + length)
+//         .bold()
+//         .fontcolor("red") +
+//       content.substring(start + length + 1, content.length);
+//     this.setState({ content: newcontent });
+//   }
+// }
+
+//possible future use for color coding
+// highlight() {
+//   let { errors } = this.state.errors;
+//   let highlights = errors.map((e, i) => {
+//     return { offset: e.offset, length: e.length };
+//   });
+//   this.setState({ highlights: highlights });
+// }
