@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Speech from "./Speech";
 require("dotenv").config();
 
 class Search extends Component {
@@ -11,9 +12,11 @@ class Search extends Component {
       results: [],
       defs: [],
       lexCat: [],
-      speech: []
+      speech: [[{ audioFile: "none" }]],
+      check: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.speechDisplay = this.speechDisplay.bind(this);
   }
 
   handleChange = e => {
@@ -31,8 +34,9 @@ class Search extends Component {
           type: type
         })
         .then(response =>
-          this.setState({ results: response.data, input: "" }, () =>
-            console.log(this.state.results)
+          this.setState(
+            { results: response.data, input: "", check: false },
+            () => console.log(this.state.results)
           )
         )
         .catch(e => console.log(e));
@@ -53,18 +57,22 @@ class Search extends Component {
       return e.lexicalCategory;
     });
     let speech = this.state.results.map((e, i) => {
-      return e.pronunciations.map((f, j) => {
+      return e.pronunciations.filter(f => {
         return f.audioFile;
       });
     });
-    this.setState({ defs: defs, lexCat: lexCat, speech: speech }, () =>
-      console.log(this.state)
+    this.setState(
+      { defs: defs, lexCat: lexCat, speech: speech, check: !this.state.check },
+      () => console.log(this.state)
     );
   }
 
-  render() {
-    let speechDisplay = this.state.speech;
+  speechDisplay() {
+    console.log(this.state.speech[0][0].audioFile);
+    return <Speech speech={this.state.speech[0][0].audioFile} />;
+  }
 
+  render() {
     let lexCatDisplay = this.state.lexCat.map((e, i) => {
       return (
         <div className="lexCat" key={i}>
@@ -86,16 +94,6 @@ class Search extends Component {
         });
       });
     });
-
-    // let defsDisplay = this.state.defs.map((e, i) => {
-    //   return (
-    //     <div className="defs" key={i}>
-    //       <h3>
-    //         {i + 1}. {e}
-    //       </h3>
-    //     </div>
-    //   );
-    // });
 
     return (
       <div className="searchcontainer">
@@ -124,6 +122,10 @@ class Search extends Component {
         <div className="searchResults">
           <div>{lexCatDisplay}</div>
           <div>{defsDisplay}</div>
+          {this.state.check ? (
+            <Speech speech={this.state.speech[0][0].audioFile} />
+          ) : null}
+          {/* <button onClick={() => this.speechDisplay()}>Get Speech</button> */}
         </div>
       </div>
     );
