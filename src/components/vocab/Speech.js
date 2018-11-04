@@ -16,11 +16,6 @@ class Speech extends Component {
     console.log(this.state.currentSong);
   }
 
-  // componentDidMount() {
-  //   this.setState({ currentSong: this.props.speech });
-  //   console.log(this.state.currentSong);
-  // }
-
   getStatusText() {
     switch (this.state.playStatus) {
       case Sound.status.PLAYING:
