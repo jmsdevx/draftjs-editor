@@ -10,17 +10,22 @@
     "draft-js-image-plugin": "^2.0.6",
     "draft-js-plugins-editor": "^2.1.1",
     "express": "^4.16.4",
+    "faker": "^4.1.0",
     "json": "^9.0.6",
     "massive": "^5.5.1",
+    "material-ui": "^0.20.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-redux": "^5.1.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.5",
     "react-sound": "^1.2.0",
+    "react-tap-event-plugin": "^3.0.3",
     "react-thunk": "^1.0.0",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "twilio": "^3.23.2",
+    "twilio-video": "^1.14.1"
   },
   "proxy": "http://localhost:3005",
   "scripts": {

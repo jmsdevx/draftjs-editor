@@ -9,6 +9,7 @@ const Navbar = () => {
       <Link to="/vocab">My Vocabulary</Link>
       <Link to="/homework/all">My Homework</Link>
       <Link to="/homework/write">Write</Link>
+      <Link to="/chat">Chat</Link>
     </nav>
   );
 };

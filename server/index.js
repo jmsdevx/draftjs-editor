@@ -14,6 +14,9 @@ const { getOneHomework } = require("./controller");
 const { deleteHomework } = require("./controller");
 const { editHomework } = require("./controller");
 const { getSearch } = require("./controller");
+const AccessToken = require("twilio").jwt.AccessToken;
+const VideoGrant = AccessToken.VideoGrant;
+const faker = require("faker");
 
 massive(process.env.STRING)
   .then(dbInstance => {
@@ -35,5 +38,26 @@ app.get("/api/homework/:id", getOneHomework);
 app.delete("/api/homework/:id", deleteHomework);
 app.put("/api/homework/edit/:id", editHomework);
 app.post("/api/search", getSearch);
+
+//twilio chat
+app.get("/token", function(req, res) {
+  let identity = faker.name.findName();
+
+  let token = new AccessToken(
+    process.env.TWILIO_SID,
+    process.env.TWILIO_API_KEY,
+    process.env.TWILIO_SECRET
+  );
+
+  token.identity = identity;
+
+  const grant = new VideoGrant();
+  token.addGrant(grant);
+
+  res.send({
+    identity: identity,
+    token: token.toJwt()
+  });
+});
 
 app.listen(port, () => console.log(`Listening on ${port}`));

@@ -7,6 +7,7 @@ import AllHomework from "./components/homework/AllHomework";
 import Results from "./components/homework/Results";
 import Edit from "./components/homework/Edit";
 import Vocab from "./components/vocab/Vocab";
+import Chat from "./components/chat/Chat";
 
 export default (
   <Switch>
@@ -17,5 +18,6 @@ export default (
     <Route path="/homework/results/:id" component={Results} />
     <Route path="/homework/edit/:id" component={Edit} />
     <Route path="/vocab" component={Vocab} />
+    <Route path="/chat" component={Chat} />
   </Switch>
 );
