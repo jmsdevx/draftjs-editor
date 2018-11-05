@@ -13,10 +13,17 @@ class Search extends Component {
       defs: [],
       lexCat: [],
       speech: [[{ audioFile: "none" }]],
-      check: false
+      text: "",
+      check: false,
+      synresults: [],
+      synonyms: [],
+      synLexCat: [],
+      antresults: [],
+      antonyms: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.speechDisplay = this.speechDisplay.bind(this);
+    this.handleThesaurus = this.handleThesaurus.bind(this);
   }
 
   handleChange = e => {
@@ -25,7 +32,6 @@ class Search extends Component {
 
   async handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state);
     const { input, type } = this.state;
     if (type === "regions=us") {
       await axios
@@ -40,12 +46,11 @@ class Search extends Component {
           )
         )
         .catch(e => console.log(e));
-      this.drill();
+      this.drilldefs();
     }
-    // else if()
   }
 
-  drill() {
+  drilldefs() {
     let defs = this.state.results.map((e, i) => {
       return e.entries.map((f, j) => {
         return f.senses.map((g, k) => {
@@ -57,13 +62,71 @@ class Search extends Component {
       return e.lexicalCategory;
     });
     let speech = this.state.results.map((e, i) => {
-      return e.pronunciations.filter(f => {
-        return f.audioFile;
-      });
+      return e.pronunciations
+        ? e.pronunciations.filter(f => {
+            return f.audioFile;
+          })
+        : this.state.speech;
+    });
+    let text = this.state.results.map((e, i) => {
+      return e.text;
     });
     this.setState(
-      { defs: defs, lexCat: lexCat, speech: speech, check: !this.state.check },
+      {
+        defs: defs,
+        lexCat: lexCat,
+        speech: speech,
+        text: text,
+        check: !this.state.check
+      },
       () => console.log(this.state)
+    );
+  }
+
+  async handleThesaurus() {
+    await axios
+      .post("http://localhost:3005/api/search/synonyms", {
+        input: this.state.text[0]
+      })
+      .then(response =>
+        this.setState({ synresults: response.data }, () =>
+          console.log(this.state.synresults)
+        )
+      )
+      .catch(e => console.log(e));
+    this.drillSynonyms();
+  }
+
+  drillSynonyms() {
+    // let syns = this.state.synresults.map((ele, ind) => {
+    //   return ele.entries.map((e, i) => {
+    //     return e.senses.map((f, j) => {
+    //       return f.subsenses.map((g, h) => {
+    //         return g.synonyms.map((element, index) => {
+    //           return element.text;
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
+    let synLexCat = this.state.results.map((e, i) => {
+      return e.lexicalCategory;
+    });
+    let syns = this.state.synresults.map((ele, ind) => {
+      return ele.entries.map((e, i) => {
+        return e.senses.map((f, j) => {
+          return f.subsenses
+            ? f.subsenses.map((g, k) => {
+                return g.synonyms.map((element, index) => {
+                  return element.text;
+                });
+              })
+            : f.synonyms;
+        });
+      });
+    });
+    this.setState({ synonyms: syns, synLexCat: synLexCat }, () =>
+      console.log(this.state.synonyms)
     );
   }
 
@@ -110,9 +173,9 @@ class Search extends Component {
               onChange={this.handleChange}
             >
               <option value="regions=us">Dictionary</option>
-              <option value="synonyms">Thesaurus</option>
+              <option value="synonyms">Synonyms</option>
+              <option value="antonyms">Antonyms</option>
               <option value="sentences">Sentences</option>
-              <option value="regions=us;pronunciations">Pronunciation</option>
             </select>
             <button className="submitbtn" onClick={this.handleSubmit}>
               Search
@@ -127,6 +190,7 @@ class Search extends Component {
           ) : null}
           {/* <button onClick={() => this.speechDisplay()}>Get Speech</button> */}
         </div>
+        <button onClick={this.handleThesaurus}>Thesaurus</button>
       </div>
     );
   }

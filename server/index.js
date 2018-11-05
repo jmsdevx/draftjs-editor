@@ -18,6 +18,7 @@ const { editNote } = require("./controller");
 const { addNote } = require("./controller");
 const { getAllNotes } = require("./controller");
 const { deleteNote } = require("./controller");
+const { getSynonyms } = require("./controller");
 const AccessToken = require("twilio").jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
 const faker = require("faker");
@@ -35,13 +36,19 @@ massive(process.env.STRING)
   })
   .catch(error => console.log(error));
 
+//homework
 app.post("/api/students", addStudent);
 app.post("/api/homework", addHomework);
 app.get("/api/homework/all", getAllHomework);
 app.get("/api/homework/:id", getOneHomework);
 app.delete("/api/homework/:id", deleteHomework);
 app.put("/api/homework/edit/:id", editHomework);
+
+//search
 app.post("/api/search", getSearch);
+app.post("/api/search/synonyms", getSynonyms);
+
+//chat
 app.post("/api/chat/note", addNote);
 app.put("/api/chat/note/:id", editNote);
 app.get("/api/notes/all/:id", getAllNotes);
