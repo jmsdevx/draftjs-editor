@@ -25,6 +25,7 @@ class Edit extends Component {
     };
     this.onChange = editorState => this.setState({ editorState });
     this.plugins = [highlightPlugin, addLinkPlugin];
+    // console.log(this.props.location.state[0].hw_content);
   }
 
   //   componentDidMount() {

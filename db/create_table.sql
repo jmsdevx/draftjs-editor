@@ -13,11 +13,19 @@
 
 -- )
 
-CREATE TABLE homework
-(
-    hw_id SERIAL PRIMARY KEY,
-    student_id INTEGER REFERENCES studentinfo(student_id),
-    hw_title VARCHAR(100),
-    hw_content jsonb
+-- CREATE TABLE homework
+-- (
+--     hw_id SERIAL PRIMARY KEY,
+--     student_id INTEGER REFERENCES studentinfo(student_id),
+--     hw_title VARCHAR(100),
+--     hw_content jsonb
 
+-- )
+
+CREATE TABLE notes
+(
+    note_id SERIAL PRIMARY KEY,
+    student_id INTEGER REFERENCES studentinfo(student_id),
+    note_title VARCHAR(100),
+    note_content jsonb
 )

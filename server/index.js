@@ -14,6 +14,10 @@ const { getOneHomework } = require("./controller");
 const { deleteHomework } = require("./controller");
 const { editHomework } = require("./controller");
 const { getSearch } = require("./controller");
+const { editNote } = require("./controller");
+const { addNote } = require("./controller");
+const { getAllNotes } = require("./controller");
+const { deleteNote } = require("./controller");
 const AccessToken = require("twilio").jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
 const faker = require("faker");
@@ -38,6 +42,10 @@ app.get("/api/homework/:id", getOneHomework);
 app.delete("/api/homework/:id", deleteHomework);
 app.put("/api/homework/edit/:id", editHomework);
 app.post("/api/search", getSearch);
+app.post("/api/chat/note", addNote);
+app.put("/api/chat/note/:id", editNote);
+app.get("/api/notes/all/:id", getAllNotes);
+app.delete("/api/notes/:id", deleteNote);
 
 //twilio chat
 app.get("/token", function(req, res) {

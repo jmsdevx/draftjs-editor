@@ -4,7 +4,8 @@ import axios from "axios";
 import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import { Card, CardText } from "material-ui/Card";
-import PageContainer from "../PageContainer1";
+import ChatNote from "../ChatNote";
+import AllNotes from "../chat/AllNotes";
 
 export default class Chat extends Component {
   constructor(props) {
@@ -16,7 +17,12 @@ export default class Chat extends Component {
       previewTracks: null,
       localMediaAvailable: false,
       hasJoinedRoom: false,
-      activeRoom: null // Track the current active room
+      activeRoom: null,
+      student_id: 2345, // Track the current active room
+      note_id: null,
+      note_title: null,
+      note_content: null,
+      editCheck: false
     };
     this.joinRoom = this.joinRoom.bind(this);
     this.handleRoomNameChange = this.handleRoomNameChange.bind(this);
@@ -26,6 +32,7 @@ export default class Chat extends Component {
     this.attachParticipantTracks = this.attachParticipantTracks.bind(this);
     this.detachTracks = this.detachTracks.bind(this);
     this.detachParticipantTracks = this.detachParticipantTracks.bind(this);
+    this.loadNote = this.loadNote.bind(this);
   }
 
   componentDidMount() {
@@ -159,6 +166,13 @@ export default class Chat extends Component {
     });
   }
 
+  loadNote() {
+    this.setState({
+      editCheck: true,
+      check: false
+    });
+  }
+
   render() {
     // Only show video track after user has joined a room
     let showLocalTrack = this.state.localMediaAvailable ? (
@@ -200,7 +214,14 @@ export default class Chat extends Component {
             </div>
           </CardText>
         </Card>
-        <PageContainer />
+        <ChatNote
+          editCheck={this.state.editCheck}
+          check={this.state.check}
+          note_id={this.state.note_id}
+          note_title={this.state.note_title}
+          note_content={this.state.note_content}
+        />
+        <AllNotes loadNote={this.loadNote} student_id={this.state.student_id} />
       </div>
     );
   }

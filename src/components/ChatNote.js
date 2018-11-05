@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { EditorState, RichUtils, convertToRaw } from "draft-js";
+import { EditorState, RichUtils, convertToRaw, convertFromRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createHighlightPlugin from "./plugins/highlightPlugin";
 import addLinkPlugin from "./plugins/addLinkPlugin";
@@ -7,62 +7,52 @@ import BlockStyleToolbar, {
   getBlockStyle
 } from "./blockstyles/BlockStyleToolbar";
 import axios from "axios";
-// import { connect } from "react-redux";
 
 const highlightPlugin = createHighlightPlugin();
 
-class PageContainer extends Component {
+class ChatNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      ready: false,
       editorState: EditorState.createEmpty(),
       displayedNote: "new",
-      hw_title: "My Homework"
+      hw_title: "My Chat Note",
+      student_id: 2345,
+      check: this.props.check
     };
+
     this.onChange = editorState => this.setState({ editorState });
     this.plugins = [highlightPlugin, addLinkPlugin];
+    this.setState = this.setState.bind(this);
   }
 
-  // componentDidMount() {
-  //   if (this.props.note === null) {
-  //     this.setState({
-  //       displayedNote: "new",
-  //       editorState: EditorState.createEmpty()
-  //     });
-  //   } else {
-  //     this.setState({
-  //       displayedNote: this.props.note.id,
-  //       editorState: EditorState.createWithContent(
-  //         convertFromRaw(JSON.parse(this.props.note.content))
-  //       )
-  //     });
-  //   }
-  // }
+  componentDidMount() {
+    this.setState({ check: this.props.check });
+  }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevProps.note == null && !!this.props.note) {
-  //     this.props.loadNote();
-  //     this.setState({
-  //       displayedNote: this.props.note.id,
-  //       editorState: EditorState.createWithContent(
-  //         convertFromRaw(JSON.parse(this.props.note.content))
-  //       )
-  //     });
-  //   }
-  // }
-
-  // submitEditor = () => {
-  //   let contentState = this.state.editorState.getCurrentContent();
-  //   if (this.state.displayedNote === "new") {
-  //     let note = { content: convertToRaw(contentState) };
-  //     note["content"] = JSON.stringify(note.content);
-  //     this.props.createNote(note.content);
-  //   } else {
-  //     let note = { content: convertToRaw(contentState) };
-  //     note["content"] = JSON.stringify(note.content);
-  //     this.props.updateNote(this.state.displayedNote, note.content);
-  //   }
-  // };
+  createEditor = () => {
+    if (this.props.editCheck) {
+      this.setState(
+        {
+          editorState: EditorState.createWithContent(
+            convertFromRaw(this.props.note_content)
+          ),
+          displayedNote: "new",
+          hw_title: this.props.note_title,
+          student_id: 2345
+        },
+        () => this.setState({ ready: true }, console.log(this.state))
+      );
+    } else {
+      this.setState({
+        editorState: EditorState.createEmpty(),
+        displayedNote: "new",
+        hw_title: "My Chat Note",
+        student_id: 2345
+      });
+    }
+  };
 
   submitEditor = () => {
     let contentState = this.state.editorState.getCurrentContent();
@@ -72,13 +62,23 @@ class PageContainer extends Component {
     console.log("title: " + this.state.hw_title);
     console.log(hw_content);
     const { student_id, hw_title } = this.state;
-    axios
-      .post("http://localhost:3005/api/homework", {
-        student_id: student_id,
-        hw_title: hw_title,
-        hw_content: hw_content
-      })
-      .then();
+    this.state.check
+      ? axios
+          .put(`http://localhost:3005/api/chat/note/${this.state.note_id}`, {
+            note_title: hw_title,
+            note_content: hw_content
+          })
+          .then(response => console.log(response))
+      : axios
+          .post(`http://localhost:3005/api/chat/note`, {
+            student_id: student_id,
+            note_title: hw_title,
+            note_content: hw_content
+          })
+          .then(response => {
+            console.log(response.data[0].max);
+            this.setState({ check: true, note_id: response.data[0].max });
+          });
   };
 
   handleKeyCommand = command => {
@@ -147,50 +147,50 @@ class PageContainer extends Component {
 
   render() {
     return (
-      <div className="editorContainer">
-        <input
-          type="text"
-          value={this.state.hw_title}
-          onChange={e => this.titleChange(e.target.value)}
-        />
-        <div className="btncontainer">
-          <button onClick={this.onUnderlineClick}>U</button>
-          <button onClick={this.onBoldClick}>
-            <b>B</b>
-          </button>
-          <button onClick={this.onItalicClick}>
-            <em>I</em>
-          </button>
-          <button onClick={this.onHighlight}>
-            <span style={{ background: "yellow" }}>H</span>
-          </button>
-          <button onClick={this.onAddLink}>LINK</button>
-        </div>
-        <div className="myeditor">
-          <BlockStyleToolbar
-            editorState={this.state.editorState}
-            handleKeyCommand={this.handleKeyCommand}
-            onChange={this.onChange}
-            onToggle={this.toggleBlockType}
-          />
-          <Editor
-            blockStyleFn={getBlockStyle}
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-            handleKeyCommand={this.handleKeyCOmmand}
-            plugins={this.plugins}
-          />
-        </div>
-        <button onClick={this.submitEditor}>Submit</button>
+      <div>
+        {this.props.editCheck ? (
+          <div className="editorContainer">
+            <input
+              type="text"
+              value={this.state.hw_title}
+              onChange={e => this.titleChange(e.target.value)}
+            />
+            <div className="btncontainer">
+              <button onClick={this.onUnderlineClick}>U</button>
+              <button onClick={this.onBoldClick}>
+                <b>B</b>
+              </button>
+              <button onClick={this.onItalicClick}>
+                <em>I</em>
+              </button>
+              <button onClick={this.onHighlight}>
+                <span style={{ background: "yellow" }}>H</span>
+              </button>
+              <button onClick={this.onAddLink}>LINK</button>
+            </div>
+            <div className="myeditor">
+              <BlockStyleToolbar
+                editorState={this.state.editorState}
+                handleKeyCommand={this.handleKeyCommand}
+                onChange={this.onChange}
+                onToggle={this.toggleBlockType}
+              />
+              <Editor
+                blockStyleFn={getBlockStyle}
+                editorState={this.state.editorState}
+                onChange={this.onChange}
+                handleKeyCommand={this.handleKeyCOmmand}
+                plugins={this.plugins}
+              />
+            </div>
+            <button onClick={this.submitEditor}>Save</button>
+          </div>
+        ) : (
+          <h2>Click New To Start A Chat Note</h2>
+        )}
       </div>
     );
   }
 }
 
-// function mapStatetoProps(state) {
-//   return { state };
-// }
-
-// export default connect(mapStatetoProps)(PageContainer);
-
-export default PageContainer;
+export default ChatNote;
