@@ -18,7 +18,7 @@ class App extends Component {
       <BrowserRouter>
         <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
           <div>
-            <Nav />
+            {/* <Nav /> */}
             {routes}
           </div>
         </MuiThemeProvider>

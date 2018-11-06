@@ -1,8 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #fc354c; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to top,
+    #fc354c,
+    #0abfbc
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to top,
+    #fc354c,
+    #0abfbc
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  color: white;
+  font-family: "Fira Sans", sans-serif;
+}
+
+:focus {
+  outline: none;
+}
+
+input[type="text"] {
+  width: 100%;
+}
+
+.searchbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 10vh;
+  width: 30vw;
+  margin: 25vh 0vw 0px 0px;
+}
+
+.input {
+  height: 6vh;
+  width: 40vw;
+  opacity: 0.3;
+  border-radius: 9999em;
+  font-size: 2.8em;
+  padding: 0.8vw;
+  box-shadow: 0 0.5vw 0.3vw 0.3vw black;
+}
+
+.input:focus {
+  box-shadow: 0 0.5vw 0.3vw 0.3vw black;
+  opacity: 0.5;
+}
+
+#vocab-bg {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+.vocabcontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 100vh;
+}
+
+.vocabcontainer h1 {
+  font-size: 7em;
+  margin: 13vh 0px;
+}
+
+.searchcontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 85vw;
+  height: 30vh;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   width: 80%;
+  height: 3vh;
   margin: 3vh auto;
+  overflow: hidden;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
 
 .editorContainer {
@@ -54,11 +145,6 @@
   flex-direction: column;
 }
 
-.searchResults {
-  display: flex;
-  flex-direction: row;
-}
-
 .flex-container {
   display: flex;
   border: 1px solid green;
@@ -91,4 +177,9 @@
 #remote-media video {
   width: inherit;
   height: 200px;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: row;
 }

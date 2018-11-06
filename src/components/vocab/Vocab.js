@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Search from "./Search";
+import play from "../vocab/Play.jpg";
 
 class Vocab extends Component {
   constructor() {
@@ -10,8 +11,11 @@ class Vocab extends Component {
   render() {
     return (
       <div className="vocabcontainer">
-        <h1>My Vocabulary</h1>
-        <Search />
+        <img src={play} id="vocab-bg" alt="images" />
+        <div>
+          <h1>Search</h1>
+          <Search />
+        </div>
       </div>
     );
   }

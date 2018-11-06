@@ -160,13 +160,19 @@ class Search extends Component {
 
     return (
       <div className="searchcontainer">
-        <h1>Search!</h1>
         <div className="searchformbox">
           <form onSubmit={this.handleSubmit} className="searchForm" />
           <div className="searchbar">
-            <label htmlFor="search">Search for a word!</label>
-            <input type="text" id="input" onChange={this.handleChange} />
-            <select
+            <label htmlFor="search" />
+            <input
+              type="text"
+              className="input"
+              id="search-input"
+              placeholder="search..."
+              onChange={this.handleChange}
+            />
+
+            {/* <select
               name="type"
               id="type"
               defaultValue="regions=us"
@@ -176,7 +182,7 @@ class Search extends Component {
               <option value="synonyms">Synonyms</option>
               <option value="antonyms">Antonyms</option>
               <option value="sentences">Sentences</option>
-            </select>
+            </select> */}
             <button className="submitbtn" onClick={this.handleSubmit}>
               Search
             </button>
