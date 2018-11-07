@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Search from "./Search";
-import play from "../vocab/Play.jpg";
+import play from "../../css/Play.mp4";
 
 class Vocab extends Component {
   constructor() {
@@ -11,9 +11,16 @@ class Vocab extends Component {
   render() {
     return (
       <div className="vocabcontainer">
-        <img src={play} id="vocab-bg" alt="images" />
-        <div>
-          <h1>Search</h1>
+        <video autoPlay loop muted className="video">
+          <source src={play} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        <div className="vocabtitle">
+          <h1>Step Up Your</h1>
+          <h1 id="vctitle">Vocabulary</h1>
+          <h1>Game</h1>
+
           <Search />
         </div>
       </div>

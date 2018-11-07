@@ -7,6 +7,8 @@ import BlockStyleToolbar, {
   getBlockStyle
 } from "./blockstyles/BlockStyleToolbar";
 import axios from "axios";
+import webg from "../css/webg.png";
+import play from "../css/Play.mp4";
 // import { connect } from "react-redux";
 
 const highlightPlugin = createHighlightPlugin();
@@ -147,41 +149,45 @@ class PageContainer extends Component {
 
   render() {
     return (
-      <div className="editorContainer">
-        <input
-          type="text"
-          value={this.state.hw_title}
-          onChange={e => this.titleChange(e.target.value)}
-        />
-        <div className="btncontainer">
-          <button onClick={this.onUnderlineClick}>U</button>
-          <button onClick={this.onBoldClick}>
-            <b>B</b>
-          </button>
-          <button onClick={this.onItalicClick}>
-            <em>I</em>
-          </button>
-          <button onClick={this.onHighlight}>
-            <span style={{ background: "yellow" }}>H</span>
-          </button>
-          <button onClick={this.onAddLink}>LINK</button>
-        </div>
-        <div className="myeditor">
-          <BlockStyleToolbar
-            editorState={this.state.editorState}
-            handleKeyCommand={this.handleKeyCommand}
-            onChange={this.onChange}
-            onToggle={this.toggleBlockType}
+      <div className="editorPage">
+        {/* <img src={webg} id="webg" alt="images" /> */}
+
+        <div className="editorContainer">
+          <input
+            type="text"
+            value={this.state.hw_title}
+            onChange={e => this.titleChange(e.target.value)}
           />
-          <Editor
-            blockStyleFn={getBlockStyle}
-            editorState={this.state.editorState}
-            onChange={this.onChange}
-            handleKeyCommand={this.handleKeyCOmmand}
-            plugins={this.plugins}
-          />
+          <div className="btncontainer">
+            <button onClick={this.onUnderlineClick}>U</button>
+            <button onClick={this.onBoldClick}>
+              <b>B</b>
+            </button>
+            <button onClick={this.onItalicClick}>
+              <em>I</em>
+            </button>
+            <button onClick={this.onHighlight}>
+              <span style={{ background: "yellow" }}>H</span>
+            </button>
+            <button onClick={this.onAddLink}>LINK</button>
+          </div>
+          <div className="myeditor">
+            <BlockStyleToolbar
+              editorState={this.state.editorState}
+              handleKeyCommand={this.handleKeyCommand}
+              onChange={this.onChange}
+              onToggle={this.toggleBlockType}
+            />
+            <Editor
+              blockStyleFn={getBlockStyle}
+              editorState={this.state.editorState}
+              onChange={this.onChange}
+              handleKeyCommand={this.handleKeyCOmmand}
+              plugins={this.plugins}
+            />
+          </div>
+          <button onClick={this.submitEditor}>Submit</button>
         </div>
-        <button onClick={this.submitEditor}>Submit</button>
       </div>
     );
   }

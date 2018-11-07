@@ -1,7 +1,26 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Speech from "./Speech";
+import Button from "./@material-ui/core/Button";
+
 require("dotenv").config();
+
+const styles = {
+  card: {
+    minWidth: 275
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)"
+  },
+  title: {
+    fontSize: 14
+  },
+  pos: {
+    marginBottom: 12
+  }
+};
 
 class Search extends Component {
   constructor(props) {
@@ -19,11 +38,13 @@ class Search extends Component {
       synonyms: [],
       synLexCat: [],
       antresults: [],
-      antonyms: []
+      antonyms: [],
+      cards: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.speechDisplay = this.speechDisplay.bind(this);
     this.handleThesaurus = this.handleThesaurus.bind(this);
+    this.cardFactory = this.cardFactory.bind(this);
   }
 
   handleChange = e => {
@@ -33,9 +54,10 @@ class Search extends Component {
   async handleSubmit(e) {
     e.preventDefault();
     const { input, type } = this.state;
+    console.log(input);
     if (type === "regions=us") {
       await axios
-        .post("http://localhost:3005/api/search", {
+        .post("/api/search", {
           input: input,
           type: type
         })
@@ -98,17 +120,6 @@ class Search extends Component {
   }
 
   drillSynonyms() {
-    // let syns = this.state.synresults.map((ele, ind) => {
-    //   return ele.entries.map((e, i) => {
-    //     return e.senses.map((f, j) => {
-    //       return f.subsenses.map((g, h) => {
-    //         return g.synonyms.map((element, index) => {
-    //           return element.text;
-    //         });
-    //       });
-    //     });
-    //   });
-    // });
     let synLexCat = this.state.results.map((e, i) => {
       return e.lexicalCategory;
     });
@@ -133,6 +144,19 @@ class Search extends Component {
   speechDisplay() {
     console.log(this.state.speech[0][0].audioFile);
     return <Speech speech={this.state.speech[0][0].audioFile} />;
+  }
+
+  cardFactory() {
+    let cards = this.state.results.map((e, i) => {
+      return (
+        <Card className="searchCard">
+          <CardContent>
+            <Typography>{e.lexicalCategory}</Typography>
+          </CardContent>
+        </Card>
+      );
+    });
+    return this.setState({ cards: [...cards, cards] });
   }
 
   render() {
@@ -165,9 +189,9 @@ class Search extends Component {
           <div className="searchbar">
             <label htmlFor="search" />
             <input
-              type="text"
+              type="input"
               className="input"
-              id="search-input"
+              id="input"
               placeholder="search..."
               onChange={this.handleChange}
             />
@@ -183,9 +207,14 @@ class Search extends Component {
               <option value="antonyms">Antonyms</option>
               <option value="sentences">Sentences</option>
             </select> */}
-            <button className="submitbtn" onClick={this.handleSubmit}>
+            <Button
+              className="submitbtn"
+              onClick={this.handleSubmit}
+              background-color="#8600FC"
+            >
               Search
-            </button>
+            </Button>
+            <Button onClick={this.handleThesaurus}>Thesaurus</Button>
           </div>
         </div>
         <div className="searchResults">
@@ -194,9 +223,12 @@ class Search extends Component {
           {this.state.check ? (
             <Speech speech={this.state.speech[0][0].audioFile} />
           ) : null}
-          {/* <button onClick={() => this.speechDisplay()}>Get Speech</button> */}
         </div>
-        <button onClick={this.handleThesaurus}>Thesaurus</button>
+        <Card className="searchCard">
+          <CardContent>
+            <Typography />
+          </CardContent>
+        </Card>
       </div>
     );
   }
